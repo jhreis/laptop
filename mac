@@ -1,9 +1,5 @@
 #!/bin/sh
 
-# Welcome to the thoughtbot laptop script!
-# Be prepared to turn your laptop (or desktop, no haters here)
-# into an awesome development machine.
-
 fancy_echo() {
   local fmt="$1"; shift
 
@@ -30,28 +26,25 @@ append_to_zshrc() {
   fi
 }
 
-trap 'ret=$?; test $ret -ne 0 && printf "failed\n\n" >&2; exit $ret' EXIT
+setup_zsh() {
+  if [ ! -d "$HOME/.bin/" ]; then
+    mkdir "$HOME/.bin"
+  fi
 
-set -e
+  if [ ! -f "$HOME/.zshrc" ]; then
+    touch "$HOME/.zshrc"
+  fi
 
-if [ ! -d "$HOME/.bin/" ]; then
-  mkdir "$HOME/.bin"
-fi
+  append_to_zshrc 'export PATH="$HOME/.bin:$PATH"'
 
-if [ ! -f "$HOME/.zshrc" ]; then
-  touch "$HOME/.zshrc"
-fi
-
-# shellcheck disable=SC2016
-append_to_zshrc 'export PATH="$HOME/.bin:$PATH"'
-
-case "$SHELL" in
-  */zsh) : ;;
-  *)
-    fancy_echo "Changing your shell to zsh ..."
-      chsh -s "$(which zsh)"
-    ;;
-esac
+  case "$SHELL" in
+    */zsh) : ;;
+    *)
+      fancy_echo "Changing your shell to zsh ..."
+        chsh -s "$(which zsh)"
+      ;;
+  esac
+}
 
 brew_install_or_upgrade() {
   if brew_is_installed "$1"; then
@@ -113,24 +106,59 @@ gem_install_or_update() {
   fi
 }
 
-if ! command -v brew >/dev/null; then
-  fancy_echo "Installing Homebrew ..."
-    curl -fsS \
-      'https://raw.githubusercontent.com/Homebrew/install/master/install' | ruby
+setup_homebrew() {
+  if ! command -v brew >/dev/null; then
+    fancy_echo "Installing Homebrew ..."
+      curl -fsS \
+        'https://raw.githubusercontent.com/Homebrew/install/master/install' | ruby
 
-    append_to_zshrc '# recommended by brew doctor'
+      append_to_zshrc '# recommended by brew doctor'
 
-    # shellcheck disable=SC2016
-    append_to_zshrc 'export PATH="/usr/local/bin:$PATH"' 1
+      # shellcheck disable=SC2016
+      append_to_zshrc 'export PATH="/usr/local/bin:$PATH"' 1
 
-    export PATH="/usr/local/bin:$PATH"
-else
-  fancy_echo "Homebrew already installed. Skipping ..."
-fi
+      export PATH="/usr/local/bin:$PATH"
+  else
+    fancy_echo "Homebrew already installed. Skipping ..."
+  fi
 
-fancy_echo "Updating Homebrew formulas ..."
-brew update
+  fancy_echo "Updating Homebrew formulas ..."
+  brew update
+}
 
+setup_ruby() {
+  brew_install_or_upgrade 'rbenv'
+  brew_install_or_upgrade 'ruby-build'
+  append_to_zshrc 'eval "$(rbenv init - zsh --no-rehash)"' 1
+  ruby_version="$(curl -sSL http://ruby.thoughtbot.com/latest)"
+
+  eval "$(rbenv init - zsh)"
+
+  if ! rbenv versions | grep -Fq "$ruby_version"; then
+    rbenv install -s "$ruby_version"
+  fi
+
+  rbenv global "$ruby_version"
+  rbenv shell "$ruby_version"
+
+  gem update --system
+
+}
+
+
+
+trap 'ret=$?; test $ret -ne 0 && printf "failed\n\n" >&2; exit $ret' EXIT
+set -e
+
+setup_zsh
+setup_homebrew
+setup_ruby
+
+brew_tap 'thoughtbot/formulae'
+brew_tap 'caskroom/cask'
+brew tap caskroom/versions
+
+brew_install_or_upgrade 'brew-cask'
 brew_install_or_upgrade 'git'
 brew_install_or_upgrade 'postgres'
 brew_launchctl_restart 'postgresql'
@@ -145,42 +173,102 @@ brew_install_or_upgrade 'imagemagick'
 brew_install_or_upgrade 'qt'
 brew_install_or_upgrade 'gh'
 brew_install_or_upgrade 'node'
-
-brew_install_or_upgrade 'rbenv'
-brew_install_or_upgrade 'ruby-build'
-
-# shellcheck disable=SC2016
-append_to_zshrc 'eval "$(rbenv init - zsh --no-rehash)"' 1
-
 brew_install_or_upgrade 'openssl'
 brew unlink openssl && brew link openssl --force
 brew_install_or_upgrade 'libyaml'
+brew_install_or_upgrade 'mongodb'
+brew_launchctl_restart 'mongodb'
+brew_install_or_upgrade 'tree'
+brew_install_or_upgrade 'watch'
+brew_install_or_upgrade 'ffmpeg' --with-fdk-aac --with-ffplay --with-freetype --with-libass --with-libquvi --with-libvorbis --with-libvpx --with-opus --with-x265
+brew_install_or_upgrade 'git-flow'
+brew_install_or_upgrade 'gnuplot'
+brew_install_or_upgrade 'libpng'
+brew_install_or_upgrade 'wget'
+brew_install_or_upgrade 'cmake'
+brew_install_or_upgrade 'readline'
+brew_install_or_upgrade 'gettext'
+brew_install_or_upgrade 'sqlite'
+brew_install_or_upgrade 'htop-osx'
+brew_install_or_upgrade docker
+brew unlink docker && brew link docker --force
+brew_install_or_upgrade boot2docker
+brew_install_or_upgrade android-sdk
+brew_install_or_upgrade android-ndk
+brew_install_or_upgrade 'heroku-toolbelt'
 
-ruby_version="$(curl -sSL http://ruby.thoughtbot.com/latest)"
-
-eval "$(rbenv init - zsh)"
-
-if ! rbenv versions | grep -Fq "$ruby_version"; then
-  rbenv install -s "$ruby_version"
+if ! command -v rcup >/dev/null; then
+  brew_install_or_upgrade 'rcm'
 fi
 
-rbenv global "$ruby_version"
-rbenv shell "$ruby_version"
+brew cask install xquartz
+brew cask install virtualbox
+brew cask install transmission
+brew cask install cyberduck
+brew cask install flux
+brew cask install ccmenu
+brew cask install dropbox
+brew cask install google-chrome
+brew cask install chromecast
+brew cask install firefox
+brew cask install opera
+brew cask install rdio
+brew cask install android-studio
+brew cask install jing
+brew cask install colloquy
+brew cask install vlc
+brew cask install steam
+brew cask install java6
+brew cask install java7
+brew cask install java
+brew cask install alfred
+brew cask install gimp
+brew cask install sublime-text3
+brew cask install subl
+brew cask install mou
+brew cask install google-notifier
+brew cask install dash
+brew cask install bettertouchtool
+brew cask install nosleep
+brew cask install google-hangouts
+brew cask install pgadmin3
+brew cask install disk-inventory-x
+brew cask install sourcetree
+brew cask install spectacle
 
-gem update --system
+brew linkapps
 
+gem_install_or_upgrade 'tmuxinator'
+gem_install_or_upgrade 'parity'
+gem_install_or_upgrade 'github'
 gem_install_or_update 'bundler'
 
 fancy_echo "Configuring Bundler ..."
   number_of_cores=$(sysctl -n hw.ncpu)
   bundle config --global jobs $((number_of_cores - 1))
 
-brew_install_or_upgrade 'heroku-toolbelt'
+curl -L http://install.ohmyz.sh | sh
 
-if ! command -v rcup >/dev/null; then
-  brew_tap 'thoughtbot/formulae'
-  brew_install_or_upgrade 'rcm'
-fi
+append_to_zshrc 'plugins=(aws common-aliases git git-flow jsontools urltools lein mvn npm pod osx rand-quote sbt scala screen coffee dircycle encode64 gradle bundler brew gem rails3 cap svn rake battery cp git-extras github heroku python docker sublime tmux tmuxinator web-search)'
+
+append_to_zshrc 'export JAVA_HOME=/Library/Java/Home'
+append_to_zshrc 'export GOPATH=$HOME/Library/Go'
+append_to_zshrc 'export LC_CTYPE=en_US.UTF-8'
+append_to_zshrc 'export LANGUAGE=en_US.UTF-8'
+append_to_zshrc 'export LANG=en_US.UTF-8'
+append_to_zshrc 'export LC_ALL=en_US.UTF-8'
+append_to_zshrc 'export EDITOR=vim'
+append_to_zshrc 'export VISUAL=vim'
+append_to_zshrc 'setopt SHARE_HISTORY'
+append_to_zshrc 'setopt EXTENDED_HISTORY'
+append_to_zshrc 'export ANDROID_SDK=/usr/local/Cellar/android-sdk/r17'
+append_to_zshrc 'export ANDROID_SDK_TOOLS=$ANDROID_SDK/tools/'
+append_to_zshrc 'export ANDROID_NDK=/usr/local/Cellar/android-ndk/r17'
+append_to_zshrc 'export PATH=$PATH:$GOPATH/bin'
+append_to_zshrc 'export PATH=$PATH:$ANDROID_SDK_TOOLS'
+append_to_zshrc 'export PATH=$PATH:$ANDROID_NDK'
+append_to_zshrc 'export PATH=/usr/local/bin:$PATH'
+
 
 if [ -f "$HOME/.laptop.local" ]; then
   . "$HOME/.laptop.local"
