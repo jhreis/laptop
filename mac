@@ -188,9 +188,6 @@ brew_install_or_upgrade 'readline'
 brew_install_or_upgrade 'gettext'
 brew_install_or_upgrade 'sqlite'
 brew_install_or_upgrade 'htop-osx'
-brew_install_or_upgrade docker
-brew unlink docker && brew link docker --force
-brew_install_or_upgrade boot2docker
 brew_install_or_upgrade android-sdk
 brew_install_or_upgrade android-ndk
 brew_install_or_upgrade 'heroku-toolbelt'
