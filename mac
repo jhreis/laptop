@@ -238,9 +238,9 @@ brew cask install spectacle
 
 brew linkapps
 
-gem_install_or_upgrade 'tmuxinator'
-gem_install_or_upgrade 'parity'
-gem_install_or_upgrade 'github'
+gem_install_or_update 'tmuxinator'
+gem_install_or_update 'parity'
+gem_install_or_update 'github'
 gem_install_or_update 'bundler'
 
 fancy_echo "Configuring Bundler ..."
