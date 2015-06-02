@@ -243,6 +243,8 @@ brew cask install slack
 brew cask install lastpass-universal
 brew cask install genymotion
 brew cask install atom
+brew cask install mjolnir
+brew cask install bettertouchtool
 brew linkapps
 
 gem_install_or_update 'tmuxinator'
@@ -278,6 +280,7 @@ echo '/usr/bin/opendiff "$2" "$5" -merge "$1"' >> ~/.bin/git-diff-cmd.sh
 chmod +x ~/.bin/git-diff-cmd.sh
 git config --global merge.external ~/.bin/git-diff-cmd.sh
 
+# TODO add script to create symbolic link for android project
 
 if [ -f "$HOME/.laptop.local" ]; then
   . "$HOME/.laptop.local"
