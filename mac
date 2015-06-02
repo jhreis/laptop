@@ -242,6 +242,7 @@ brew cask install cargo
 brew cask install slack
 brew cask install lastpass-universal
 brew cask install genymotion
+brew cask install atom
 brew linkapps
 
 gem_install_or_update 'tmuxinator'
