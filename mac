@@ -238,6 +238,7 @@ brew cask install spectacle
 brew cask install iterm2
 brew cask install rust
 brew cask install cargo
+brew cask install slack
 brew linkapps
 
 gem_install_or_update 'tmuxinator'
