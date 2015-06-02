@@ -24,5 +24,5 @@ Debugging
 Your last Laptop run will be saved to `~/laptop.log`. Read through it to see if
 you can debug the issue yourself. If not, copy the lines where the script
 failed into a [new GitHub
-Issue](https://github.com/thoughtbot/laptop/issues/new) for us. Or, attach the
+Issue](https://github.com/pvertenten/laptop/issues/new) for us. Or, attach the
 whole log file as an attachment.
