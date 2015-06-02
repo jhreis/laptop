@@ -155,6 +155,7 @@ setup_ruby
 brew_tap 'thoughtbot/formulae'
 brew_tap 'caskroom/cask'
 brew_tap caskroom/versions
+brew tap homebrew/science
 
 brew_install_or_upgrade 'brew-cask'
 brew_install_or_upgrade 'git'
@@ -191,6 +192,10 @@ brew_install_or_upgrade 'htop-osx'
 brew_install_or_upgrade android-sdk
 brew_install_or_upgrade android-ndk
 brew_install_or_upgrade 'heroku-toolbelt'
+brew_install_or_upgrade emacs
+brew_install_or_upgrade r
+brew_install_or_upgrade ghc cabal-install
+
 
 if ! command -v rcup >/dev/null; then
   brew_install_or_upgrade 'rcm'
@@ -266,7 +271,7 @@ append_to_zshrc 'export PATH=/usr/local/bin:$PATH'
 echo '#!/bin/sh' > ~/.bin/git-diff-cmd.sh
 echo '/usr/bin/opendiff "$2" "$5" -merge "$1"' >> ~/.bin/git-diff-cmd.sh
 chmod +x ~/.bin/git-diff-cmd.sh
-git config --global diff.external ~/.bin/git-diff-cmd.sh
+git config --global merge.external ~/.bin/git-diff-cmd.sh
 
 
 if [ -f "$HOME/.laptop.local" ]; then
