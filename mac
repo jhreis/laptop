@@ -240,7 +240,7 @@ brew cask install iterm2
 brew cask install rust
 brew cask install cargo
 brew cask install slack
-brew cask install lastpass-universal
+brew cask install lastpass
 brew cask install genymotion
 brew cask install atom
 brew cask install mjolnir
