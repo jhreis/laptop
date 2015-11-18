@@ -275,8 +275,11 @@ append_to_zshrc 'export ANDROID_NDK=`ls -d /usr/local/Cellar/android-ndk/* | hea
 append_to_zshrc 'export PATH=$PATH:$ANDROID_SDK_TOOLS'
 append_to_zshrc 'export PATH=$PATH:$ANDROID_NDK'
 append_to_zshrc 'export PATH=/usr/local/bin:$PATH'
-append_to_zshrc 'export ZIPALIGN=$ANDROID_SDK/bin/zipalign
+append_to_zshrc 'export ZIPALIGN=$ANDROID_SDK/bin/zipalign'
 
+ANDROID_INSTALL=`android list sdk --all | grep --invert-match Obsolete | awk '{ print $1}'  | sed 's/[^0-9]*//g' | sed '/^\s*$/d' | paste -s -d , -`
+( sleep 5 && while [ 1 ]; do sleep 1; echo y; done ) \
+  | android update sdk --no-ui --all --filter $ANDROID_INSTALL
 
 echo '#!/bin/sh' > ~/.bin/git-diff-cmd.sh
 echo '/usr/bin/opendiff "$2" "$5" -merge "$1"' >> ~/.bin/git-diff-cmd.sh
