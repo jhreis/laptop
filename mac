@@ -71,6 +71,7 @@ brew_is_upgradable() {
 }
 
 brew_tap() {
+  brew untap "$1" 2> /dev/null
   brew tap "$1" 2> /dev/null
 }
 
@@ -147,7 +148,7 @@ setup_ruby() {
 
 trap 'ret=$?; test $ret -ne 0 && printf "failed\n\n" >&2; exit $ret' EXIT
 set -e
-
+sudo ls
 # TODO: setup ssh tokens
 setup_zsh
 setup_homebrew
