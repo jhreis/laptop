@@ -1,6 +1,6 @@
 #!/bin/sh
 
-fancy_echo() {x
+fancy_echo() {
   local fmt="$1"; shift
   printf "\n$fmt\n" "$@"
 }
