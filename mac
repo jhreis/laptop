@@ -1,6 +1,6 @@
 #!/bin/sh
 
-fancy_echo() {
+fancy_echo() {x
   local fmt="$1"; shift
   printf "\n$fmt\n" "$@"
 }
@@ -275,6 +275,8 @@ append_to_zshrc 'export ANDROID_NDK=`ls -d /usr/local/Cellar/android-ndk/* | hea
 append_to_zshrc 'export PATH=$PATH:$ANDROID_SDK_TOOLS'
 append_to_zshrc 'export PATH=$PATH:$ANDROID_NDK'
 append_to_zshrc 'export PATH=/usr/local/bin:$PATH'
+append_to_zshrc 'export ZIPALIGN=$ANDROID_SDK/bin/zipalign
+
 
 echo '#!/bin/sh' > ~/.bin/git-diff-cmd.sh
 echo '/usr/bin/opendiff "$2" "$5" -merge "$1"' >> ~/.bin/git-diff-cmd.sh
