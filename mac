@@ -247,6 +247,7 @@ brew cask install atom
 brew cask install mjolnir
 brew cask install bettertouchtool
 brew cask install hex-fiend
+brew cask install adium
 brew linkapps
 
 gem_install_or_update 'tmuxinator'
